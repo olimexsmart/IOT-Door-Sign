@@ -5,8 +5,8 @@ error_reporting(E_ALL);
 // Read ini with token information
 $ini = parse_ini_file('tokens.ini');
 //var_dump($ini); 
-
-$url = 'https://api.fitbit.com/1/user/-/activities/heart/date/' . date('Y-m-d', time() - 86400) . '/1d.json';
+// Reading logs of two days before
+$url = 'https://api.fitbit.com/1/user/-/activities/heart/date/' . date('Y-m-d', time() - 172800) . '/1d.json';
 
 
 $data = file_get_contents($url, false, stream_context_create([
