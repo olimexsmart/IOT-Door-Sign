@@ -21,7 +21,7 @@ $result = file_get_contents($ini['refreshURI'], false, stream_context_create([
     ]]));
 
 //echo $result;
-if($accessData != false) {
+if($result != false) {
     $accessData = json_decode($result, true);
     //var_dump($accessData);
 
