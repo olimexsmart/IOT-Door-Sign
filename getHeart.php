@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 $ini = parse_ini_file('tokens.ini');
 //var_dump($ini); 
 
-$url = 'https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json';
+$url = 'https://api.fitbit.com/1/user/-/activities/heart/date/' . date('Y-m-d', time() - 86400) . '/1d.json';
 
 
 $data = file_get_contents($url, false, stream_context_create([
