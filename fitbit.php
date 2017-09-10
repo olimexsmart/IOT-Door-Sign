@@ -31,9 +31,9 @@ if($data != false) {
     $tokenIni = 'accessToken = "' . $accessData['access_token'] . '"' . "\n" . 'refreshToken = "' . $accessData['refresh_token'] . '"';
     file_put_contents('tokens.ini', $tokenIni);
 
-    echo "Success getting tokens";
+    echo date('H:i:s d-m-Y') . "Success getting tokens";
 } else {
-    echo "Failed getting tokens";
+    echo date('H:i:s d-m-Y') . "Failed getting tokens";
 }
 
 
