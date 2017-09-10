@@ -21,12 +21,16 @@ $result = file_get_contents($ini['refreshURI'], false, stream_context_create([
     ]]));
 
 //echo $result;
-$accessData = json_decode($result, true);
-//var_dump($accessData);
+if($accessData != false) {
+    $accessData = json_decode($result, true);
+    //var_dump($accessData);
 
-$tokenIni = 'accessToken = "' . $accessData['access_token'] . '"' . "\n" . 'refreshToken = "' . $accessData['refresh_token'] . '"';
-file_put_contents('tokens.ini', $tokenIni);
+    $tokenIni = 'accessToken = "' . $accessData['access_token'] . '"' . "\n" . 'refreshToken = "' . $accessData['refresh_token'] . '"';
+    file_put_contents('tokens.ini', $tokenIni);
 
-echo "Tokens refreshed";
+    echo "Tokens refreshed";
+} else {
+    echo "Tokens not refreshed";
+}
 
 

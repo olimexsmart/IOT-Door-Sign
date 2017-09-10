@@ -24,10 +24,16 @@ $result = file_get_contents($ini['authorizationURI'], false, stream_context_crea
     ]]));
 
 //echo $result;
-$accessData = json_decode($result, true);
-var_dump($accessData);
+if($data != false) {
+    $accessData = json_decode($result, true);
+    var_dump($accessData);
 
-$tokenIni = 'accessToken = "' . $accessData['access_token'] . '"' . "\n" . 'refreshToken = "' . $accessData['refresh_token'] . '"';
-file_put_contents('tokens.ini', $tokenIni);
+    $tokenIni = 'accessToken = "' . $accessData['access_token'] . '"' . "\n" . 'refreshToken = "' . $accessData['refresh_token'] . '"';
+    file_put_contents('tokens.ini', $tokenIni);
+
+    echo "Success getting tokens";
+} else {
+    echo "Failed getting tokens"
+}
 
 
