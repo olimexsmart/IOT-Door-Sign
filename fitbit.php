@@ -33,7 +33,7 @@ if($data != false) {
 
     echo "Success getting tokens";
 } else {
-    echo "Failed getting tokens"
+    echo "Failed getting tokens";
 }
 
 
