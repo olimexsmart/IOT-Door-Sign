@@ -11,6 +11,7 @@ $code = $_GET['code'];
 
 // Access Token Request
 $content = http_build_query(array('clientId' => $ini['clientId'], 'redirect_uri' => $ini['callbackURL'], 'code' => $code, 'grant_type' => 'authorization_code'));
+//echo $content;
 
 $result = file_get_contents($ini['authorizationURI'], false, stream_context_create([
     'http' => [ 'method'          => 'POST'
@@ -18,15 +19,15 @@ $result = file_get_contents($ini['authorizationURI'], false, stream_context_crea
               , 'content'         => $content
               , 'header'          => implode("\r\n", ['Accept: */*'                                                    
                                                     , 'Content-Type: application/x-www-form-urlencoded'
-                                                    , 'Authorization: Basic ' . base64_encode($ini['clientId'] . ':' . $ini['clientSecret'])
+                                                    , 'Authorization: Basic ' . 'MjI4TFo1OjQ2ZDA3MmI0MjEwMjNmMWVlMmU4MWRhN2I5YjU2YTZh' //base64_encode($ini['clientId'] . ':' . $ini['clientSecret'])
                                                     , 'User-Agent: olli']) . "\r\n"
     ]]));
 
-echo $result;
+//echo $result;
 $accessData = json_decode($result, true);
 var_dump($accessData);
 
-$tokenIni = 'accessToken = "' . $accessData['access_token'] . '\n' . 'refreshToken = "' . $accessData['refresh_token'] . '"';
+$tokenIni = 'accessToken = "' . $accessData['access_token'] . '"' . "\n" . 'refreshToken = "' . $accessData['refresh_token'] . '"';
 file_put_contents('tokens.ini', $tokenIni);
 
 

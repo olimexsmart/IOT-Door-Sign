@@ -1,6 +1,10 @@
 <?php
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
 
-//read ini file here
+// Read ini with token information
+$ini = parse_ini_file('tokens.ini');
+//var_dump($ini); 
 
 $url = 'https://api.fitbit.com/1/user/-/activities/heart/date/today/1d.json';
 
@@ -10,14 +14,32 @@ $data = file_get_contents($url, false, stream_context_create([
               , 'follow_location' => true              
               , 'header'          => implode("\r\n", ['Accept: */*'                                                    
                                                     , 'Content-Type: application/x-www-form-urlencoded'
-                                                    , "Authorization: Bearer $accessToken"
+                                                    , "Authorization: Bearer " . $ini['accessToken']
                                                     , 'User-Agent: olli']) . "\r\n"
     ]]));
 
 
+$values = json_decode($data, true);
+//var_dump($values);
 
+// Update database here with data
+// Database connection
+require_once 'login.php';
+$sql = new mysqli($hostName, $userName, $passWord, $dataBase);
+if ($sql->connect_error) {
+    die($sql->connect_error);
+}
 
+// Delete all data since we are getting all of it again
+$query = "TRUNCATE TABLE heartrate";
+$sql->query($query);
 
-echo $data;
+for($i = 0; $i < count($values['activities-heart-intraday']['dataset']); $i++) {
+    $time = $values['activities-heart-intraday']['dataset'][$i]['time'];
+    $heart = $values['activities-heart-intraday']['dataset'][$i]['value'];
+    $query = "INSERT INTO heartrate VALUES('$time', $heart)";
+    $sql->query($query);
+    //echo $query . '<br>';
+}
 
-// update database here
+echo "Done";
