@@ -17,14 +17,14 @@ $result = file_get_contents($ini['authorizationURI'], false, stream_context_crea
     'http' => [ 'method'          => 'POST'
               , 'follow_location' => true
               , 'content'         => $content
-              , 'header'          => implode("\r\n", ['Accept: */*'                                                    
+              , 'header'          => implode("\r\n", ['Accept: */*'
                                                     , 'Content-Type: application/x-www-form-urlencoded'
                                                     , 'Authorization: Basic ' . base64_encode($ini['clientId'] . ':' . $ini['clientSecret'])
                                                     , 'User-Agent: olli']) . "\r\n"
     ]]));
 
 //echo $result;
-if($data != false) {
+if($result != false) {
     $accessData = json_decode($result, true);
     var_dump($accessData);
 

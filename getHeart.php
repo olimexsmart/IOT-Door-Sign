@@ -11,8 +11,8 @@ $url = 'https://api.fitbit.com/1/user/-/activities/heart/date/' . date('Y-m-d', 
 
 $data = file_get_contents($url, false, stream_context_create([
     'http' => [ 'method'          => 'GET'
-              , 'follow_location' => true              
-              , 'header'          => implode("\r\n", ['Accept: */*'                                                    
+              , 'follow_location' => true
+              , 'header'          => implode("\r\n", ['Accept: */*'
                                                     , 'Content-Type: application/x-www-form-urlencoded'
                                                     , "Authorization: Bearer " . $ini['accessToken']
                                                     , 'User-Agent: olli']) . "\r\n"
@@ -24,7 +24,7 @@ require_once 'login.php';
 $sql = new mysqli($hostName, $userName, $passWord, $dataBase);
 if ($sql->connect_error) {
     die($sql->connect_error);
-}    
+}
 
 if($data != false) { // Checking if there was a valid response
     $values = json_decode($data, true);

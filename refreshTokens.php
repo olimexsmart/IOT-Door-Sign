@@ -14,7 +14,7 @@ $result = file_get_contents($ini['refreshURI'], false, stream_context_create([
     'http' => [ 'method'          => 'POST'
               , 'follow_location' => true
               , 'content'         => $content
-              , 'header'          => implode("\r\n", ['Accept: */*'                                                    
+              , 'header'          => implode("\r\n", ['Accept: */*'
                                                     , 'Content-Type: application/x-www-form-urlencoded'
                                                     , 'Authorization: Basic ' . base64_encode($ini['clientId'] . ':' . $ini['clientSecret'])
                                                     , 'User-Agent: olli']) . "\r\n"
