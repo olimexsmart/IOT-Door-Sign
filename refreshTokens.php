@@ -28,9 +28,9 @@ if($result != false) {
     $tokenIni = 'accessToken = "' . $accessData['access_token'] . '"' . "\n" . 'refreshToken = "' . $accessData['refresh_token'] . '"';
     file_put_contents('tokens.ini', $tokenIni);
 
-    echo date('H:i:s d-m-Y') . "Tokens refreshed";
+    echo date('H:i:s d-m-Y') . "\tTokens refreshed\n";
 } else {
-    echo date('H:i:s d-m-Y') . "Tokens not refreshed";
+    echo date('H:i:s d-m-Y') . "\tTokens not refreshed\n";
 }
 
 

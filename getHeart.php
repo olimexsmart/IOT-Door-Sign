@@ -42,12 +42,12 @@ if($data != false) { // Checking if there was a valid response
         //echo $query . '<br>';
     }
 
-    echo date('H:i:s d-m-Y') . "Done updating database";
+    echo date('H:i:s d-m-Y') . "\tDone updating database\n";
 
 } else {
     // Delete all data since the retreiving was unsuccesful
     $query = "TRUNCATE TABLE heartrate";
     $sql->query($query);  
 
-    echo date('H:i:s d-m-Y') . "Failed updating database";
+    echo date('H:i:s d-m-Y') . "\tFailed updating database\n";
 }
