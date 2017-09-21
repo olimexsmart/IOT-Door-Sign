@@ -3,7 +3,7 @@ ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
 // Read ini with application information
-$ini = parse_ini_file('fitbitData.ini');
+$ini = parse_ini_file('/home/fitbitFiles/fitbitData.ini');
 //var_dump($ini); 
 
 // Get the code from the request
@@ -27,9 +27,9 @@ $result = file_get_contents($ini['authorizationURI'], false, stream_context_crea
 if($result != false) {
     $accessData = json_decode($result, true);
     //var_dump($accessData);
-
+    // Save tokens into a file for other script use
     $tokenIni = 'accessToken = "' . $accessData['access_token'] . '"' . "\n" . 'refreshToken = "' . $accessData['refresh_token'] . '"';
-    file_put_contents('tokens.ini', $tokenIni);
+    file_put_contents('/home/fitbitFiles/tokens.ini', $tokenIni);
 
     echo date('H:i:s d-m-Y') . "\tSuccess getting tokens\n";
 } else {

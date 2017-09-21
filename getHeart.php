@@ -3,8 +3,8 @@ ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
 // Read ini with token information
-$ini = parse_ini_file('tokens.ini');
-//var_dump($ini); 
+$ini = parse_ini_file('/home/fitbitFiles/tokens.ini');
+//var_dump($ini);
 // Reading logs of two days before
 $url = 'https://api.fitbit.com/1/user/-/activities/heart/date/' . date('Y-m-d', time() - 172800) . '/1d.json';
 

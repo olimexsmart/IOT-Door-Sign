@@ -3,8 +3,8 @@ ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
 // Read ini with application information
-$ini = parse_ini_file('fitbitData.ini');
-$tokens = parse_ini_file('tokens.ini');
+$ini = parse_ini_file('/home/fitbitFiles/fitbitData.ini');
+$tokens = parse_ini_file('/home/fitbitFiles/tokens.ini');
 
 // Access Token Request
 $content = http_build_query(array('grant_type' => 'refresh_token', 'refresh_token' => $tokens['refreshToken']));
