@@ -26,7 +26,7 @@ if($result != false) {
     //var_dump($accessData);
 
     $tokenIni = 'accessToken = "' . $accessData['access_token'] . '"' . "\n" . 'refreshToken = "' . $accessData['refresh_token'] . '"';
-    file_put_contents('tokens.ini', $tokenIni);
+    file_put_contents('/home/fitbitFiles/tokens.ini', $tokenIni);
 
     echo date('H:i:s d-m-Y') . "\tTokens refreshed\n";
 } else {
