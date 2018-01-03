@@ -20,6 +20,8 @@ const char* url = "http://192.168.1.44/embe/getCurrentHR.php";
 bool flag = false;
 byte HR;
 unsigned long epoch;
+int r, g, b;
+//int  randR, randG, 
 
 
 void setup() {
@@ -75,10 +77,15 @@ void loop() {
     http.end();   //Close connection
   }
 
+  if (HR <= 0) {
+    HR = 60;
+    Serial.println("Manage wrong data in DB");
+  }
+
 
   while (millis() - epoch < 60000) { // Cycle inside for a minute
 
-    heratBeat(255, 255, 255, 1023);
+    heartBeat(255, 255, 255, 1023);
 
     delay(60000 / HR);
   }
@@ -86,69 +93,65 @@ void loop() {
   epoch = millis();
 }
 
-void heratBeat(byte r, byte g, byte b, int intensity) {
-  unsigned int PRinterval = (unsigned int) (150000L / (2 * intensity));
-  unsigned int QRSinterval = (unsigned int) (350000L / (2 * intensity));
-  /*
-    // First pulse
-    for (int i = intensity; i > 0; i--) {
-      analogWrite(D8, i);
-      analogWrite(D9, i);
-      analogWrite(D10, i);
-      delayMicroseconds(PRinterval);
-    }
-    for (int i = 0; i < intensity; i++) {
-      analogWrite(D8, i);
-      analogWrite(D9, i);
-      analogWrite(D10, i);
-      delayMicroseconds(PRinterval);
-    }
 
-    delay(100);
+/*
+   FUNCTIONS
+*/
 
-    // Second pulse
-    for (int i = intensity; i > 0; i--) {
-      analogWrite(D8, i);
-      analogWrite(D9, i);
-      analogWrite(D10, i);
-      delayMicroseconds(QRSinterval);
-    }
-    for (int i = 0; i < intensity; i++) {
-      analogWrite(D8, i);
-      analogWrite(D9, i);
-      analogWrite(D10, i);
-      delayMicroseconds(QRSinterval);
-    }
-  */
-  int midway = intensity / 2;
+void heartBeat(byte r, byte g, byte b, int intensity) {
+  int midway = 2 * (intensity / 3);
+  int lowend = intensity / 10;
   int agg;
-  int lowend = intensity / 15;
 
-  for (int i = lowend; i < midway; i++) {
-    agg = ((511500.0)/((i*0.671)-1023.0)) + 1523.0;
+
+  // Increasing
+  for (int i = 0; i < intensity; i++) {
+    agg = deLog(i);
     analogWrite(D8, agg);
     analogWrite(D9, agg);
     analogWrite(D10, agg);
-    delayMicroseconds(175);
+    delayMicroseconds(100);
   }
 
-  delay(100);
-
-  for (int i = midway; i < intensity; i++) {
-    agg = ((511500.0)/((i*0.671)-1023.0)) + 1523.0;
-    analogWrite(D8, agg);
-    analogWrite(D9, agg);
-    analogWrite(D10, agg);
-    delayMicroseconds(175);
-  }
-
+  // Decreasing
   for (int i = intensity; i > lowend; i--) {
-    agg = ((511500.0)/((i*0.671)-1023.0)) + 1523.0;
+    agg = deLog(i);
     analogWrite(D8, agg);
     analogWrite(D9, agg);
     analogWrite(D10, agg);
-    delayMicroseconds(1000);
+    delayMicroseconds(100);
   }
 
+  delay(25);
+  // Increasing
+  for (int i = lowend; i < midway; i++) {
+    agg = deLog(i);
+    analogWrite(D8, agg);
+    analogWrite(D9, agg);
+    analogWrite(D10, agg);
+    delayMicroseconds(150);
+  }
+
+  // Decreasing
+  for (int i = midway; i > lowend; i--) {
+    agg = deLog(i);
+    analogWrite(D8, agg);
+    analogWrite(D9, agg);
+    analogWrite(D10, agg);
+    delayMicroseconds(750);
+  }
+  for (int i = lowend; i > 0; i--) {
+    agg = deLog(i);
+    analogWrite(D8, agg);
+    analogWrite(D9, agg);
+    analogWrite(D10, agg);
+    delayMicroseconds(2000);
+  }
+
+}
+
+
+int deLog(int x) {
+  return ((511500.0) / ((x * 0.671) - 1023.0)) + 1523.0;
 }
 
