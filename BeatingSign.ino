@@ -9,6 +9,8 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 
+#define SPEED 500
+
 const char* ssid     = "Penthouse";
 const char* password = "ollinthebuilding";
 //const char* ssid     = "GRAAL-WLAN";
@@ -19,9 +21,11 @@ const char* url = "http://192.168.1.44/embe/getCurrentHR.php";
 
 bool flag = false;
 byte HR;
-unsigned long epoch;
+unsigned long minute, lastBeat;
+int pause;
 int r, g, b;
-//int  randR, randG, 
+int  randR, randG, randB;
+bool dirR, dirG, dirB;
 
 
 void setup() {
@@ -59,7 +63,19 @@ void setup() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 
-  epoch = millis();
+  // Initialize vars
+  randomSeed(analogRead(A0));
+  minute = millis();
+  lastBeat = millis();
+  r = random(1023);
+  g = random(1023);
+  b = random(1023);
+  randR = random(SPEED);
+  randG = random(SPEED);
+  randB = random(SPEED);
+  dirR = random(1);
+  dirG = random(1);
+  dirB = random(1);
 }
 
 
@@ -82,15 +98,24 @@ void loop() {
     Serial.println("Manage wrong data in DB");
   }
 
+  pause = 60000 / HR;
 
-  while (millis() - epoch < 60000) { // Cycle inside for a minute
 
-    heartBeat(255, 255, 255, 1023);
+  while (millis() - minute < 60000) { // Cycle inside for a minute
 
-    delay(60000 / HR);
+//    if (millis() - lastBeat > pause) {
+//      heartBeat(255, 255, 255, 1023);
+//      lastBeat = millis();
+//    }
+    backgroundUpdate();
+    analogWrite(D8, r);
+    analogWrite(D9, g);
+    analogWrite(D10, b);
+
+    delay(10);
   }
 
-  epoch = millis();
+  minute = millis();
 }
 
 
@@ -153,5 +178,26 @@ void heartBeat(byte r, byte g, byte b, int intensity) {
 
 int deLog(int x) {
   return ((511500.0) / ((x * 0.671) - 1023.0)) + 1523.0;
+}
+
+void backgroundUpdate() {
+  if (randR == random(SPEED))
+    dirR = !dirR;
+  if (randG == random(SPEED))
+    dirG = !dirG;
+  if (randB == random(SPEED))
+    dirB = !dirB;
+
+  r = dirR ? (r + 1) : (r - 1);
+  g = dirG ? (g + 1) : (g - 1);
+  b = dirB ? (b + 1) : (b - 1);
+
+  r = constrain(r, 0, 1023);
+  g = constrain(g, 0, 1023);
+  b = constrain(b, 0, 1023);
+
+  Serial.println(r);
+  Serial.println(g);
+  Serial.println(b);
 }
 
