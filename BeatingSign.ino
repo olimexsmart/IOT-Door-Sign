@@ -10,6 +10,9 @@
 #include <ESP8266HTTPClient.h>
 
 #define SPEED 500
+#define RED D8
+#define GREEN D9
+#define BLUE D10
 
 const char* ssid     = "Penthouse";
 const char* password = "ollinthebuilding";
@@ -22,20 +25,20 @@ const char* url = "http://192.168.1.44/embe/getCurrentHR.php";
 bool flag = false;
 byte HR;
 unsigned long minute, lastBeat;
-int pause;
+unsigned int pause;
 int r, g, b;
 int  randR, randG, randB;
 bool dirR, dirG, dirB;
 
 
 void setup() {
-  pinMode(D8, OUTPUT);
-  pinMode(D9, OUTPUT);
-  pinMode(D10, OUTPUT);
+  pinMode(RED, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+  pinMode(BLUE, OUTPUT);
 
-  digitalWrite(D8, HIGH);
-  digitalWrite(D9, HIGH);
-  digitalWrite(D10, HIGH);
+  digitalWrite(RED, HIGH);
+  digitalWrite(GREEN, HIGH);
+  digitalWrite(BLUE, HIGH);
 
   Serial.begin(115200);
   delay(10);
@@ -103,14 +106,13 @@ void loop() {
 
   while (millis() - minute < 60000) { // Cycle inside for a minute
 
-//    if (millis() - lastBeat > pause) {
-//      heartBeat(255, 255, 255, 1023);
-//      lastBeat = millis();
-//    }
     backgroundUpdate();
-    analogWrite(D8, r);
-    analogWrite(D9, g);
-    analogWrite(D10, b);
+    applyRGB(0);
+
+    if (millis() - lastBeat > pause) {
+      heartBeat(1023);
+      lastBeat = millis();
+    }
 
     delay(10);
   }
@@ -119,57 +121,40 @@ void loop() {
 }
 
 
-/*
+/* #########################################################################################
    FUNCTIONS
 */
 
-void heartBeat(byte r, byte g, byte b, int intensity) {
+void heartBeat(int intensity) {
   int midway = 2 * (intensity / 3);
   int lowend = intensity / 10;
-  int agg;
-
 
   // Increasing
   for (int i = 0; i < intensity; i++) {
-    agg = deLog(i);
-    analogWrite(D8, agg);
-    analogWrite(D9, agg);
-    analogWrite(D10, agg);
+    applyRGB(i);
     delayMicroseconds(100);
   }
 
   // Decreasing
   for (int i = intensity; i > lowend; i--) {
-    agg = deLog(i);
-    analogWrite(D8, agg);
-    analogWrite(D9, agg);
-    analogWrite(D10, agg);
+    applyRGB(i);
     delayMicroseconds(100);
   }
 
   delay(25);
   // Increasing
   for (int i = lowend; i < midway; i++) {
-    agg = deLog(i);
-    analogWrite(D8, agg);
-    analogWrite(D9, agg);
-    analogWrite(D10, agg);
+    applyRGB(i);
     delayMicroseconds(150);
   }
 
   // Decreasing
   for (int i = midway; i > lowend; i--) {
-    agg = deLog(i);
-    analogWrite(D8, agg);
-    analogWrite(D9, agg);
-    analogWrite(D10, agg);
+    applyRGB(i);
     delayMicroseconds(750);
   }
   for (int i = lowend; i > 0; i--) {
-    agg = deLog(i);
-    analogWrite(D8, agg);
-    analogWrite(D9, agg);
-    analogWrite(D10, agg);
+    applyRGB(i);
     delayMicroseconds(2000);
   }
 
@@ -195,9 +180,11 @@ void backgroundUpdate() {
   r = constrain(r, 0, 1023);
   g = constrain(g, 0, 1023);
   b = constrain(b, 0, 1023);
+}
 
-  Serial.println(r);
-  Serial.println(g);
-  Serial.println(b);
+void applyRGB(int bias) {
+  analogWrite(RED, deLog(constrain(r + bias, 0, 1023)));
+  analogWrite(GREEN, deLog(constrain(g + bias, 0, 1023)));
+  analogWrite(BLUE, deLog(constrain(b + bias, 0, 1023)));
 }
 
