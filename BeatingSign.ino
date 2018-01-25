@@ -8,16 +8,14 @@
 
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+#include "credentials.h"
 
 #define SPEED 500
 #define RED D8
 #define GREEN D9
 #define BLUE D10
 
-const char* ssid     = "Penthouse";
-const char* password = "ollinthebuilding";
-//const char* ssid     = "GRAAL-WLAN";
-//const char* password = "p1n0c4s4l1n0";
+
 
 //const char* url = "http://olimexsmart.it/embe/getCurrentHR.php";
 const char* url = "http://192.168.1.44/embe/getCurrentHR.php";
@@ -70,6 +68,7 @@ void setup() {
   randomSeed(analogRead(A0));
   minute = millis();
   lastBeat = millis();
+  pause = 1000;
   r = random(1023);
   g = random(1023);
   b = random(1023);
@@ -96,22 +95,15 @@ void loop() {
     http.end();   //Close connection
   }
 
-  if (HR <= 0) {
-    HR = 60;
-    Serial.println("Manage wrong data in DB");
-  }
-
-  pause = 60000 / HR;
-
-
   while (millis() - minute < 60000) { // Cycle inside for a minute
 
     backgroundUpdate();
     applyRGB(0);
 
-    if (millis() - lastBeat > pause) {
+    if (millis() - lastBeat > pause && HR > 0) {
       heartBeat(1023);
       lastBeat = millis();
+      pause = 60000 / HR;
     }
 
     delay(10);
