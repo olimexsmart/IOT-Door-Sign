@@ -97,16 +97,17 @@ void loop() {
 
   while (millis() - minute < 60000) { // Cycle inside for a minute
 
-    backgroundUpdate();
+    backgroundUpdate(); // Update global vars and apply
     applyRGB(0);
 
-    if (millis() - lastBeat > pause && HR > 0) {
-      heartBeat(1023);
+    // Beat only if there is a HR data, 0 means no data
+    if (millis() - lastBeat > pause && HR > 0) { // HR beat correct intervals
+      heartBeat(1023); // For the moment always at max intensity
       lastBeat = millis();
       pause = 60000 / HR;
     }
 
-    delay(10);
+    delay(10); // Don't change background too fast
   }
 
   minute = millis();
@@ -116,8 +117,9 @@ void loop() {
 /* #########################################################################################
    FUNCTIONS
 */
-
+// Applies over current RGB combination a HR cycle, saturating it to white
 void heartBeat(int intensity) {
+  // Definting different steps in the beat sequence
   int midway = 2 * (intensity / 3);
   int lowend = intensity / 10;
 
@@ -133,7 +135,8 @@ void heartBeat(int intensity) {
     delayMicroseconds(100);
   }
 
-  delay(25);
+  delay(25); // Pause between contractions
+  
   // Increasing
   for (int i = lowend; i < midway; i++) {
     applyRGB(i);
@@ -147,33 +150,42 @@ void heartBeat(int intensity) {
   }
   for (int i = lowend; i > 0; i--) {
     applyRGB(i);
-    delayMicroseconds(2000);
+    delayMicroseconds(1500);
   }
 
 }
 
-
+// Trying to linearize our perception of light intensity with the 1023 levels of intensity
 int deLog(int x) {
   return ((511500.0) / ((x * 0.671) - 1023.0)) + 1523.0;
 }
 
+// Random backgroung update
 void backgroundUpdate() {
-  if (randR == random(SPEED))
+  // Direction change whenever a there is a random match
+  if (randR == random(SPEED)) {
     dirR = !dirR;
-  if (randG == random(SPEED))
+    randR = random(SPEED);
+  }
+  if (randG == random(SPEED)) {
     dirG = !dirG;
-  if (randB == random(SPEED))
+    randG = random(SPEED);
+  }
+  if (randB == random(SPEED)) {
     dirB = !dirB;
+    randB = random(SPEED);
+  }
 
+  // Valuea update according to direction
   r = dirR ? (r + 1) : (r - 1);
   g = dirG ? (g + 1) : (g - 1);
   b = dirB ? (b + 1) : (b - 1);
-
   r = constrain(r, 0, 1023);
   g = constrain(g, 0, 1023);
   b = constrain(b, 0, 1023);
 }
 
+// Appling RGB values to PWM 
 void applyRGB(int bias) {
   analogWrite(RED, deLog(constrain(r + bias, 0, 1023)));
   analogWrite(GREEN, deLog(constrain(g + bias, 0, 1023)));
